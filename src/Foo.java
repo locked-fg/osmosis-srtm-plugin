@@ -1,4 +1,4 @@
 
-public class Foo {
+public class Foo { 
     
 }
