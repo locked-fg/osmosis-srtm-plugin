@@ -54,13 +54,27 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
             }
         } catch (IOException ex) {
         }
-        DEFAULT_SERVER_BASE = properties.getProperty("srtm.src.url.base");
+        DEFAULT_SERVER_BASE = checkForTrailingSlash(properties.getProperty("srtm.src.url.base"));
 
         for (Object o : properties.keySet()) {
             String s = (String) o;
             if (s.startsWith("srtm.src.url.subdir.")) {
-                DEFAULT_SERVER_SUB_DIRS += properties.getProperty(s) + ";";
+                DEFAULT_SERVER_SUB_DIRS += checkForTrailingSlash(properties.getProperty(s)) + ";";
             }
+        }
+    }
+    
+    
+    /**
+     * checks a string for an trailing slash
+     * @param s input string w/o trailing slash
+     * @return string s with added trailing slash
+     */
+    private String checkForTrailingSlash(String s) {
+        if (s.endsWith("/")) {
+            return s;
+        } else {
+            return s += "/";
         }
     }
 
