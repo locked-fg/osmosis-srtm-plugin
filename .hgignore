@@ -1,0 +1,9 @@
+\.orig$
+\.orig\..*$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+^lib/CopyLibs$
+^lib/junit$
+^lib/junit_4$
+^nbproject$
