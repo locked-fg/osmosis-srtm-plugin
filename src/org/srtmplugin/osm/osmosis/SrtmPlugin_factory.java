@@ -45,15 +45,17 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
      * serverSubDirectories from the srtmservers.properties files
      * inside the jar
      */
-    private void readProperties() {
+    protected void readSrvProperties() {
         Properties properties = new Properties();
-        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("/srtmservers.properties")) {
+        try (InputStream is = this.getClass().getResourceAsStream("/srtmservers.properties")) {
             if (is != null) {
                 properties.load(is);
                 is.close();
             }
         } catch (IOException ex) {
+            ex.printStackTrace();
         }
+
         DEFAULT_SERVER_BASE = checkForTrailingSlash(properties.getProperty("srtm.src.url.base"));
 
         for (Object o : properties.keySet()) {
@@ -62,6 +64,17 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
                 DEFAULT_SERVER_SUB_DIRS += checkForTrailingSlash(properties.getProperty(s)) + ";";
             }
         }
+    }
+    
+    protected List<String> getDefault_Server_Sub_Dirs() {
+        String[] sss_split = DEFAULT_SERVER_SUB_DIRS.split(";");
+        List<String> al_sss = new ArrayList<>();
+        al_sss.addAll(Arrays.asList(sss_split));
+        return al_sss;
+    }
+    
+    protected String getDefault_Server_Base() {
+        return DEFAULT_SERVER_BASE;
     }
     
     
@@ -83,7 +96,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
      */
     @Override
     protected TaskManager createTaskManagerImpl(TaskConfiguration taskConfig) {
-        readProperties();
+        readSrvProperties();
 
         String localDir = getStringArgument(taskConfig, ARG_LOCAL_DIR, DEFAULT_LOCAL_DIR);
         String serverBase = getStringArgument(taskConfig, ARG_SERVER_BASE, DEFAULT_SERVER_BASE);
