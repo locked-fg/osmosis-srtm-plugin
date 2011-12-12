@@ -55,7 +55,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
     private Map<String, Integer> map_failed_srtm = new HashMap<>();
 
     /**
-     * Constructor
+     * Constructor <br>
      * 
      * @param srtm_base_url base URL of server
      * @param srtm_sub_dirs subdirectories seperated by semicolon
@@ -73,30 +73,45 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         if (!localDir.isDirectory()) {
             throw new IllegalArgumentException("Not a directory " + localDir.getAbsolutePath());
         }
-        
+
         this.srtm_base_url = srtm_base_url;
         this.srtm_sub_dirs = srtm_sub_dirs;
-        
-        //HACK
-        SrtmPlugin_factory f = new SrtmPlugin_factory();
-        f.readSrvProperties();
-        if (this.srtm_base_url == null) {
-            this.srtm_base_url = f.getDefault_Server_Base();
-            log.fine("HACK used: srtm_base_url");
-        }
-        if (this.srtm_sub_dirs == null) {
-            this.srtm_sub_dirs = f.getDefault_Server_Sub_Dirs();
-            log.fine("HACK used: srtm_sub_dirs");
-        }
-        //HACK END
-        
         this.localDir = localDir;
         tmpActivated = tmp;
         this.localOnly = localOnly;
         this.repExist = repExist;
     }
     
-    
+    /**
+     * Constructor2 <br>
+     * srtm_base_url and srtm_sub_dirs are directly read from the srtmservers.properties
+     * file without any possible interception
+     * 
+     * @param localDir local directory for downloading of srtm files
+     * @param tmp is localDir the tempdirectory? true/false
+     * @param localOnly should only local available files be used? true/false
+     * @param repExist replace existing height tags? true/false
+     */
+    public SrtmPlugin_task(final File localDir, final boolean tmp, final boolean localOnly, final boolean repExist) {
+        if (!localDir.exists()) {
+            if (!localDir.mkdirs()) {
+                throw new IllegalArgumentException("Can not create directory " + localDir.getAbsolutePath());
+            }
+        }
+        if (!localDir.isDirectory()) {
+            throw new IllegalArgumentException("Not a directory " + localDir.getAbsolutePath());
+        }
+
+        SrtmPlugin_factory f = new SrtmPlugin_factory();
+        f.readSrvProperties();
+        this.srtm_base_url = f.getDefault_Server_Base();
+        this.srtm_sub_dirs = f.getDefault_Server_Sub_Dirs();
+
+        this.localDir = localDir;
+        tmpActivated = tmp;
+        this.localOnly = localOnly;
+        this.repExist = repExist;
+    }
 
     @Override
     public void process(EntityContainer entityContainer) {
@@ -313,7 +328,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             ZipFile zipfile;
             File srtmzip = null;
             if (ex1) {
-            log.log(Level.FINE, "Remote zipped SRTM file ''{0}.zip'' found in server subdir ''{1}''. Downloading...", new Object[]{file.getName(), subDir});
+                log.log(Level.FINE, "Remote zipped SRTM file ''{0}.zip'' found in server subdir ''{1}''. Downloading...", new Object[]{file.getName(), subDir});
                 BufferedOutputStream outp;
                 try (InputStream inp = new BufferedInputStream(exUrl.openStream())) {
                     srtmzip = File.createTempFile(file.getName(), ".zip", localDir);

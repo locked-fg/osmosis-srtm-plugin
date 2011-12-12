@@ -45,7 +45,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
      * serverSubDirectories from the srtmservers.properties files
      * inside the jar
      */
-    public void readSrvProperties() {
+    protected void readSrvProperties() {
         Properties properties = new Properties();
         try (InputStream is = this.getClass().getResourceAsStream("/srtmservers.properties")) {
             if (is != null) {
@@ -66,14 +66,14 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         }
     }
     
-    public List<String> getDefault_Server_Sub_Dirs() {
+    protected List<String> getDefault_Server_Sub_Dirs() {
         String[] sss_split = DEFAULT_SERVER_SUB_DIRS.split(";");
         List<String> al_sss = new ArrayList<>();
         al_sss.addAll(Arrays.asList(sss_split));
         return al_sss;
     }
     
-    public String getDefault_Server_Base() {
+    protected String getDefault_Server_Base() {
         return DEFAULT_SERVER_BASE;
     }
     
