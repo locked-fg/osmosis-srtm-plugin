@@ -73,14 +73,30 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         if (!localDir.isDirectory()) {
             throw new IllegalArgumentException("Not a directory " + localDir.getAbsolutePath());
         }
+        
         this.srtm_base_url = srtm_base_url;
         this.srtm_sub_dirs = srtm_sub_dirs;
+        
+        //HACK
+        SrtmPlugin_factory f = new SrtmPlugin_factory();
+        f.readSrvProperties();
+        if (this.srtm_base_url == null) {
+            this.srtm_base_url = f.getDefault_Server_Base();
+            log.fine("HACK used: srtm_base_url");
+        }
+        if (this.srtm_sub_dirs == null) {
+            this.srtm_sub_dirs = f.getDefault_Server_Sub_Dirs();
+            log.fine("HACK used: srtm_sub_dirs");
+        }
+        //HACK END
+        
         this.localDir = localDir;
         tmpActivated = tmp;
         this.localOnly = localOnly;
         this.repExist = repExist;
-
     }
+    
+    
 
     @Override
     public void process(EntityContainer entityContainer) {
