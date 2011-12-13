@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.srtmplugin.osm.osmosis;
 
 import java.util.HashMap;
@@ -14,9 +10,8 @@ public class SrtmPlugin_loader implements PluginLoader {
 
     @Override
     public Map<String, TaskManagerFactory> loadTaskFactories() {
-        Map<String, TaskManagerFactory> factoryMap;
+        Map<String, TaskManagerFactory> factoryMap = new HashMap<>();
         SrtmPlugin_factory srtmplugin = new SrtmPlugin_factory();
-        factoryMap = new HashMap<>();
 
         factoryMap.put("write-srtm", srtmplugin);
 

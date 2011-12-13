@@ -6,12 +6,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -50,7 +52,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
     private List<String> srtm_sub_dirs;
     private boolean tmpActivated = false;
     private boolean localOnly = false;
-    private boolean repExist = true;
+    private boolean replaceExistingTags = true;
     private Map<File, SoftReference<BufferedInputStream>> srtmMap = new HashMap<>();
     private Map<String, Integer> map_failed_srtm = new HashMap<>();
 
@@ -62,9 +64,9 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
      * @param localDir local directory for downloading of srtm files
      * @param tmp is @localDir the tempdirectory? true/false
      * @param localOnly should only local available files be used? true/false
-     * @param repExist replace existing height tags? true/false
+     * @param replaceExistingTags replace existing height tags? true/false
      */
-    public SrtmPlugin_task(final String srtm_base_url, final List<String> srtm_sub_dirs, final File localDir, final boolean tmp, final boolean localOnly, final boolean repExist) {
+    public SrtmPlugin_task(final String srtm_base_url, final List<String> srtm_sub_dirs, final File localDir, final boolean tmp, final boolean localOnly, final boolean replaceExistingTags) {
         if (!localDir.exists()) {
             if (!localDir.mkdirs()) {
                 throw new IllegalArgumentException("Can not create directory " + localDir.getAbsolutePath());
@@ -79,9 +81,9 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         this.localDir = localDir;
         tmpActivated = tmp;
         this.localOnly = localOnly;
-        this.repExist = repExist;
+        this.replaceExistingTags = replaceExistingTags;
     }
-    
+
     /**
      * Constructor2 <br>
      * srtm_base_url and srtm_sub_dirs are directly read from the srtmservers.properties
@@ -90,9 +92,9 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
      * @param localDir local directory for downloading of srtm files
      * @param tmp is localDir the tempdirectory? true/false
      * @param localOnly should only local available files be used? true/false
-     * @param repExist replace existing height tags? true/false
+     * @param replaceExistingTags replace existing height tags? true/false
      */
-    public SrtmPlugin_task(final File localDir, final boolean tmp, final boolean localOnly, final boolean repExist) {
+    public SrtmPlugin_task(final File localDir, final boolean tmp, final boolean localOnly, final boolean replaceExistingTags) {
         if (!localDir.exists()) {
             if (!localDir.mkdirs()) {
                 throw new IllegalArgumentException("Can not create directory " + localDir.getAbsolutePath());
@@ -103,14 +105,14 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         }
 
         SrtmPlugin_factory f = new SrtmPlugin_factory();
-        f.readSrvProperties();
-        this.srtm_base_url = f.getDefault_Server_Base();
-        this.srtm_sub_dirs = f.getDefault_Server_Sub_Dirs();
+        f.readServerProperties();
+        this.srtm_base_url = f.getDefaultServerBase();
+        this.srtm_sub_dirs = f.getDefaultServerSubDirs();
 
         this.localDir = localDir;
         tmpActivated = tmp;
         this.localOnly = localOnly;
-        this.repExist = repExist;
+        this.replaceExistingTags = replaceExistingTags;
     }
 
     @Override
@@ -147,22 +149,20 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         //check if it should be replaced or not
         boolean addHeight = true;
         if (pbf_tag != null) {
-            if (srtmHeight > 0) {
-                if (repExist) {
+            if (srtmHeight.isNaN()) {
+                addHeight = false;
+            } else {
+                if (replaceExistingTags) {
                     tags.remove(pbf_tag);
                 } else {
                     addHeight = false;
                 }
-            } else {
-                addHeight = false;
             }
         }
 
         //add new srtm height tag
         if (addHeight) {
-            if (srtmHeight > 0) {
-                tags.add(new Tag("height", srtmHeight.toString()));
-            }
+            tags.add(new Tag("height", srtmHeight.toString()));
         }
 
         //create new node entity with new srtm height tag
@@ -215,6 +215,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         int nlat = Math.abs((int) Math.floor(lat));
         int nlon = Math.abs((int) Math.floor(lon));
         double val = 0;
+        String ID_file = "";
         try {
             NumberFormat nf = NumberFormat.getInstance();
             String NS, WE;
@@ -238,16 +239,16 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
             File file = new File(NS + f_nlat + WE + f_nlon + ".hgt");
 
-            String ID_file = file.getName();
+            ID_file = file.getName();
             if (map_failed_srtm.containsKey(ID_file)) {
 //                log.fine("STRM file " + ID_file + " already blacklisted, Returning height: 0.0");
-                return 0;
+                return Double.NaN;
             }
             double ilat = getILat(lat);
             double ilon = getILon(lon);
             int rowmin = (int) Math.floor(ilon);
             int colmin = (int) Math.floor(ilat);
-            short[] values = new short[4];
+            double[] values = new double[4];
             values[0] = getValues(file, rowmin, colmin);
             values[1] = getValues(file, rowmin + 1, colmin);
             values[2] = getValues(file, rowmin, colmin + 1);
@@ -258,7 +259,8 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             double val2 = values[2] * coefrowmin + values[3] * (1 - coefrowmin);
             val = val1 * coefcolmin + val2 * (1 - coefcolmin);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Invalid height format detected in {0} for lat={1} | lon={2}\n returning Double.NaN", new Object[]{ID_file, lat, lon});
+            return Double.NaN;
         }
         return val;
     }
@@ -278,10 +280,10 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
     private short readShort(BufferedInputStream in) throws IOException {
         int ch1 = in.read();
         int ch2 = in.read();
-        return (short) ((ch1 << 8) + (ch2 << 0));
+        return (short) ((ch1 << 8) + (ch2));
     }
 
-    private short getValues(File file, int rowmin, int colmin) throws Exception {
+    private double getValues(File file, int rowmin, int colmin) throws MalformedURLException, FileNotFoundException, IOException {
         file = new File(localDir, file.getName());
         boolean ex1 = false;
         URL exUrl = new URL("http://127.0.0.1/");
@@ -290,8 +292,8 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             //if srtm filename is already blacklisted
             //return height 0
             if (map_failed_srtm.containsKey(ID_file)) {
-//                log.fine("SRTM file " + ID_file + " already blacklisted, Returning height: 0.0");
-                return 0;
+//                log.fine("SRTM file " + ID_file + " already blacklisted, Returning height: Double.NaN");
+                return Double.NaN;
             }
             if (!localOnly) {
                 log.log(Level.FINE, "Local SRTM file ''{0}'' not found. Trying to uncompress.", file.getName());
@@ -312,17 +314,17 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
                         }
                     }
                     //if zipped srtm file cannot be found at any subdirectory
-                    //return height 0
+                    //return height Double.NaN
                     if (!ex1) {
                         log.log(Level.FINE, "Remote zipped SRTM file ''{0}.zip'' not found. Returning no height", file.getName());
                         map_failed_srtm.put(file.getName(), 1);
-                        return 0;
+                        return Double.NaN;
                     }
                 }
             } else {
                 //if local files only is true and no matching srtm file is found
-                //return height 0
-                return 0;
+                //return height Double.NaN;
+                return Double.NaN;
             }
 
             ZipFile zipfile;
@@ -340,11 +342,11 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             } else {
                 zipfile = new ZipFile(zipped, ZipFile.OPEN_READ);
             }
-            try (InputStream inp = zipfile.getInputStream(zipfile.getEntry(file.getName())); BufferedOutputStream outp = new BufferedOutputStream(new FileOutputStream(file), 1024)) {
+            InputStream inp = zipfile.getInputStream(zipfile.getEntry(file.getName()));
+            BufferedOutputStream outp = new BufferedOutputStream(new FileOutputStream(file), 1024);
 
-                copyInputStream(inp, outp);
-                outp.flush();
-            }
+            copyInputStream(inp, outp);
+            outp.flush();
 
             if (srtmzip != null) {
                 srtmzip.deleteOnExit();
@@ -358,12 +360,12 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
         }
 
-        //if file can not be succesfull downloaded
+        //if file can not be succesfully downloaded
         //or any other error occurs which prevents the 
         //normal use of the srtm file
-        //return height 0
+        //return height Double.NaN;
         if (!file.exists()) {
-            return 0;
+            return Double.NaN;
         }
 
         SoftReference<BufferedInputStream> inRef = srtmMap.get(file);
@@ -371,7 +373,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         if (in == null) {
             int srtmbuffer = 4 * 1024 * 1024;
             in = new BufferedInputStream(new FileInputStream(file), srtmbuffer);
-            srtmMap.put(file, new SoftReference<BufferedInputStream>(in));
+            srtmMap.put(file, new SoftReference<>(in));
             in.mark(srtmbuffer);
         }
         in.reset();
@@ -393,6 +395,11 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         out.close();
     }
 
+    /**
+     * checks a given URL for availbility
+     * @param urlN given URL
+     * @return true if URL exists otherwise false
+     */
     private static boolean urlExist(URL urlN) {
         try {
             HttpURLConnection.setFollowRedirects(false);
@@ -400,7 +407,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             con.setRequestMethod("HEAD");
             return (con.getResponseCode() == HttpURLConnection.HTTP_OK);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Invalid server URL found: {0}", urlN);
             return false;
         }
     }
