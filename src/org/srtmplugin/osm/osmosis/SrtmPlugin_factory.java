@@ -15,33 +15,29 @@ import org.openstreetmap.osmosis.core.pipeline.v0_6.SinkSourceManager;
 import org.openstreetmap.osmosis.core.task.v0_6.SinkSource;
 
 public class SrtmPlugin_factory extends TaskManagerFactory {
-    private static final Logger log = Logger.getLogger(SrtmPlugin_factory.class.getName());
 
+    private static final Logger log = Logger.getLogger(SrtmPlugin_factory.class.getName());
+    
     //local directory for saving the downloaded *.hgt files
     private static final String ARG_LOCAL_DIR = "locDir";
     //default: tempdir
     private static final String DEFAULT_LOCAL_DIR = System.getProperty("java.io.tmpdir");
-    
     //url for server basedir
     private static final String ARG_SERVER_BASE = "srvBase";
     //default: defined at srtmservers.properties
-    
     private static String DEFAULT_SERVER_BASE = "";
     //subdirs for differenty countries, separated by semicolon
     private static final String ARG_SERVER_SUB_DIRS = "srvSubDirs";
     //default: defined at srtmservers.properties
     private static String DEFAULT_SERVER_SUB_DIRS = "";
-    
     //local use of plugin (only available hgt files inside local directory)
     private static final String ARG_LOCAL_ONLY = "locOnly";
     //default: false
     private static final boolean DEFAULT_LOCAL_ONLY = false;
-    
     //replace existing "height" tags of nodes
     private static final String ARG_REPLACE_EXISTING = "repExisting";
     //default: true
     private static final boolean DEFAULT_REPLACE_EXISTING = true;
-    
     private boolean serverBaseSet = false;
     private boolean serverSubDirsSet = false;
 
@@ -58,9 +54,8 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
                 is.close();
             }
         } catch (IOException ex) {
-            log.severe("srtmservers.properties not found inside jar!");
-            ex.printStackTrace();
-            
+            log.severe("ERROR: srtmservers.properties not found inside jar!/n Aborting excution.");
+            System.exit(1);
         }
 
         DEFAULT_SERVER_BASE = checkForTrailingSlash(properties.getProperty("srtm.src.url.base"));
@@ -74,7 +69,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         }
         serverSubDirsSet = false;
     }
-    
+
     protected List<String> getDefaultServerSubDirs() {
         if (!serverSubDirsSet) {
             readServerProperties();
@@ -84,15 +79,14 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         al_sss.addAll(Arrays.asList(sss_split));
         return al_sss;
     }
-    
+
     protected String getDefaultServerBase() {
         if (!serverBaseSet) {
             readServerProperties();
         }
         return DEFAULT_SERVER_BASE;
     }
-    
-    
+
     /**
      * checks a string for an trailing slash
      * @param s input string w/o trailing slash
@@ -117,7 +111,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         String serverBase = getStringArgument(taskConfig, ARG_SERVER_BASE, DEFAULT_SERVER_BASE);
         String serverSubDirs = getStringArgument(taskConfig, ARG_SERVER_SUB_DIRS, DEFAULT_SERVER_SUB_DIRS);
         boolean localOnly = getBooleanArgument(taskConfig, ARG_LOCAL_ONLY, DEFAULT_LOCAL_ONLY);
-        boolean repExist = getBooleanArgument(taskConfig, ARG_REPLACE_EXISTING, DEFAULT_REPLACE_EXISTING);
+        boolean replaceExistingTags = getBooleanArgument(taskConfig, ARG_REPLACE_EXISTING, DEFAULT_REPLACE_EXISTING);
 
         boolean tmpDir = false;
         if (localDir.equals(System.getProperty("java.io.tmpdir"))) {
@@ -137,7 +131,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
                 lDir,
                 tmpDir,
                 localOnly,
-                repExist);
+                replaceExistingTags);
 
         return new SinkSourceManager(taskConfig.getId(), task, taskConfig.getPipeArgs());
     }
