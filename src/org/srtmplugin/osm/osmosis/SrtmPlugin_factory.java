@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 import org.openstreetmap.osmosis.core.pipeline.common.TaskConfiguration;
 import org.openstreetmap.osmosis.core.pipeline.common.TaskManager;
 import org.openstreetmap.osmosis.core.pipeline.common.TaskManagerFactory;
@@ -14,6 +15,7 @@ import org.openstreetmap.osmosis.core.pipeline.v0_6.SinkSourceManager;
 import org.openstreetmap.osmosis.core.task.v0_6.SinkSource;
 
 public class SrtmPlugin_factory extends TaskManagerFactory {
+    private static final Logger log = Logger.getLogger(SrtmPlugin_factory.class.getName());
 
     //local directory for saving the downloaded *.hgt files
     private static final String ARG_LOCAL_DIR = "locDir";
@@ -39,13 +41,16 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
     private static final String ARG_REPLACE_EXISTING = "repExisting";
     //default: true
     private static final boolean DEFAULT_REPLACE_EXISTING = true;
+    
+    private boolean serverBaseSet = false;
+    private boolean serverSubDirsSet = false;
 
     /**
      * method for reading the serverBaseDir and 
      * serverSubDirectories from the srtmservers.properties files
      * inside the jar
      */
-    protected void readSrvProperties() {
+    protected void readServerProperties() {
         Properties properties = new Properties();
         try (InputStream is = this.getClass().getResourceAsStream("/srtmservers.properties")) {
             if (is != null) {
@@ -53,10 +58,13 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
                 is.close();
             }
         } catch (IOException ex) {
+            log.severe("srtmservers.properties not found inside jar!");
             ex.printStackTrace();
+            
         }
 
         DEFAULT_SERVER_BASE = checkForTrailingSlash(properties.getProperty("srtm.src.url.base"));
+        serverBaseSet = true;
 
         for (Object o : properties.keySet()) {
             String s = (String) o;
@@ -64,16 +72,23 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
                 DEFAULT_SERVER_SUB_DIRS += checkForTrailingSlash(properties.getProperty(s)) + ";";
             }
         }
+        serverSubDirsSet = false;
     }
     
-    protected List<String> getDefault_Server_Sub_Dirs() {
+    protected List<String> getDefaultServerSubDirs() {
+        if (!serverSubDirsSet) {
+            readServerProperties();
+        }
         String[] sss_split = DEFAULT_SERVER_SUB_DIRS.split(";");
         List<String> al_sss = new ArrayList<>();
         al_sss.addAll(Arrays.asList(sss_split));
         return al_sss;
     }
     
-    protected String getDefault_Server_Base() {
+    protected String getDefaultServerBase() {
+        if (!serverBaseSet) {
+            readServerProperties();
+        }
         return DEFAULT_SERVER_BASE;
     }
     
@@ -96,7 +111,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
      */
     @Override
     protected TaskManager createTaskManagerImpl(TaskConfiguration taskConfig) {
-        readSrvProperties();
+        readServerProperties();
 
         String localDir = getStringArgument(taskConfig, ARG_LOCAL_DIR, DEFAULT_LOCAL_DIR);
         String serverBase = getStringArgument(taskConfig, ARG_SERVER_BASE, DEFAULT_SERVER_BASE);
