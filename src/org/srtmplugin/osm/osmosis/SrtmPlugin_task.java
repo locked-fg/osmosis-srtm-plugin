@@ -198,6 +198,11 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
     public void setSink(Sink sink) {
         this.sink = sink;
     }
+    
+    @Override
+    public void initialize(Map<String, Object> metaData) {
+    	// added in osmosis 0.41
+    }
 
     /**
      * Determine the filename of the srtm file
@@ -407,9 +412,4 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             return false;
         }
     }
-
-	@Override
-	public void initialize(Map<String, Object> metaData) {
-		// added in osmosis 0.41
-	}
 }
