@@ -407,4 +407,9 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
             return false;
         }
     }
+
+	@Override
+	public void initialize(Map<String, Object> metaData) {
+		// added in osmosis 0.41
+	}
 }
