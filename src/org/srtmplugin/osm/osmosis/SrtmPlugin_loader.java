@@ -2,7 +2,6 @@ package org.srtmplugin.osm.osmosis;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.openstreetmap.osmosis.core.pipeline.common.TaskManagerFactory;
 import org.openstreetmap.osmosis.core.plugin.PluginLoader;
 
