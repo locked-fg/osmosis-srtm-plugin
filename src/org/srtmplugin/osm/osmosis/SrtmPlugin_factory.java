@@ -75,8 +75,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
             readServerProperties();
         }
         String[] sss_split = DEFAULT_SERVER_SUB_DIRS.split(";");
-        List<String> al_sss = new ArrayList<>();
-        al_sss.addAll(Arrays.asList(sss_split));
+        List<String> al_sss = Arrays.asList(sss_split);
         return al_sss;
     }
 
@@ -100,9 +99,6 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected TaskManager createTaskManagerImpl(TaskConfiguration taskConfig) {
         readServerProperties();
@@ -121,9 +117,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         File lDir = new File(localDir);
 
         String[] sss_split = serverSubDirs.split(";");
-        List<String> al_sss = new ArrayList<>();
-        al_sss.addAll(Arrays.asList(sss_split));
-
+        List<String> al_sss = Arrays.asList(sss_split);
 
         SinkSource task = new SrtmPlugin_task(
                 serverBase,
