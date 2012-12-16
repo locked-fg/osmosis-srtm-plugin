@@ -42,6 +42,7 @@ import org.openstreetmap.osmosis.core.task.v0_6.SinkSource;
 public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
     private static final Logger log = Logger.getLogger(SrtmPlugin_task.class.getName());
+    private final String TAG_NAME = "height";
     private Sink sink;
     private File localDir = new File("./");
     private String srtm_base_url = "";
@@ -135,7 +136,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         Collection<Tag> tags = node.getTags();
         Tag pbf_tag = null;
         for (Tag tag : tags) {
-            if (tag.getKey().equalsIgnoreCase("height")) {
+            if (tag.getKey().equalsIgnoreCase(TAG_NAME)) {
                 pbf_tag = tag;
                 break;
             }
@@ -158,7 +159,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
         //add new srtm height tag
         if (addHeight) {
-            tags.add(new Tag("height", srtmHeight.toString()));
+            tags.add(new Tag(TAG_NAME, srtmHeight.toString()));
         }
 
         //create new node entity with new srtm height tag
@@ -215,7 +216,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
     private double srtmHeight(double lat, double lon) {
         int nlat = Math.abs((int) Math.floor(lat));
         int nlon = Math.abs((int) Math.floor(lon));
-        double val = 0;
+        double val;
         String ID_file = "";
         try {
             NumberFormat nf = NumberFormat.getInstance();
@@ -351,7 +352,6 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
             if (srtmzip != null) {
                 srtmzip.deleteOnExit();
-//                file.deleteOnExit();
             }
             if (tmpActivated) {
                 srtmzip.deleteOnExit();
