@@ -42,7 +42,7 @@ import org.openstreetmap.osmosis.core.task.v0_6.SinkSource;
 public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
     private static final Logger log = Logger.getLogger(SrtmPlugin_task.class.getName());
-    private final String TAG_NAME = "height";
+    private String tagName = "height";
     private Sink sink;
     private File localDir = new File("./");
     private String srtm_base_url = "";
@@ -63,7 +63,8 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
      * @param localOnly should only local available files be used? true/false
      * @param replaceExistingTags replace existing height tags? true/false
      */
-    public SrtmPlugin_task(final String srtm_base_url, final List<String> srtm_sub_dirs, final File localDir, final boolean tmp, final boolean localOnly, final boolean replaceExistingTags) {
+    public SrtmPlugin_task(final String srtm_base_url, final List<String> srtm_sub_dirs, final File localDir, 
+            final boolean tmp, final boolean localOnly, final boolean replaceExistingTags, String tagName) {
         if (!localDir.exists()) {
             if (!localDir.mkdirs()) {
                 throw new IllegalArgumentException("Can not create directory " + localDir.getAbsolutePath());
@@ -79,6 +80,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         tmpActivated = tmp;
         this.localOnly = localOnly;
         this.replaceExistingTags = replaceExistingTags;
+        this.tagName = tagName;
     }
 
     /**
@@ -136,7 +138,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         Collection<Tag> tags = node.getTags();
         Tag pbf_tag = null;
         for (Tag tag : tags) {
-            if (tag.getKey().equalsIgnoreCase(TAG_NAME)) {
+            if (tag.getKey().equalsIgnoreCase(tagName)) {
                 pbf_tag = tag;
                 break;
             }
@@ -159,7 +161,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
         //add new srtm height tag
         if (addHeight) {
-            tags.add(new Tag(TAG_NAME, srtmHeight.toString()));
+            tags.add(new Tag(tagName, srtmHeight.toString()));
         }
 
         //create new node entity with new srtm height tag

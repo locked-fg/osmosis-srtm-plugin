@@ -38,6 +38,10 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
     private static final String ARG_REPLACE_EXISTING = "repExisting";
     //default: true
     private static final boolean DEFAULT_REPLACE_EXISTING = true;
+    // tag name
+    private static final String TAG_NAME = "tagName";
+    private String tagName = "height";
+    
     private boolean serverBaseSet = false;
     private boolean serverSubDirsSet = false;
 
@@ -108,6 +112,7 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
         String serverSubDirs = getStringArgument(taskConfig, ARG_SERVER_SUB_DIRS, DEFAULT_SERVER_SUB_DIRS);
         boolean localOnly = getBooleanArgument(taskConfig, ARG_LOCAL_ONLY, DEFAULT_LOCAL_ONLY);
         boolean replaceExistingTags = getBooleanArgument(taskConfig, ARG_REPLACE_EXISTING, DEFAULT_REPLACE_EXISTING);
+        tagName = getStringArgument(taskConfig, TAG_NAME, tagName);
 
         boolean tmpDir = false;
         if (localDir.equals(System.getProperty("java.io.tmpdir"))) {
@@ -125,7 +130,8 @@ public class SrtmPlugin_factory extends TaskManagerFactory {
                 lDir,
                 tmpDir,
                 localOnly,
-                replaceExistingTags);
+                replaceExistingTags,
+                tagName);
 
         return new SinkSourceManager(taskConfig.getId(), task, taskConfig.getPipeArgs());
     }
