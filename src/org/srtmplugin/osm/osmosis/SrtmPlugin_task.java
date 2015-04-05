@@ -113,6 +113,19 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         this.localOnly = localOnly;
         this.replaceExistingTags = replaceExistingTags;
     }
+    
+    /**
+     * Constructor3, just sets all the values needed to be used as a library.
+     * @param localDir Local directory for downloading of srtm files.
+     * @param tmp Is localDir the tempdirectory? {@code true}/{@code false}.
+     * @param localOnly Should only local available files be used? {@code true}/{@code false}.
+     * @param replaceExistingTags Replace existing tags? {@code true}/{@code false}.
+     * @param tagName Specify the tag name to store the elevation to ({@code ele} would be suitable).
+     */
+    public SrtmPlugin_task(final File localDir, final boolean tmp, final boolean localOnly, final boolean replaceExistingTags, String tagName) {
+        this(localDir, tmp, localOnly, replaceExistingTags);
+        this.tagName = tagName;
+    }
 
     @Override
     public void process(EntityContainer entityContainer) {
