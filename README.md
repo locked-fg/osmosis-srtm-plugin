@@ -23,8 +23,7 @@ The plugin works out-of-the-box but provides configurable settings to satisfy ho
 * [NASA SRTM](http://www2.jpl.nasa.gov/srtm/)
 * [plugin page at OpenStreetMap](http://wiki.openstreetmap.org/wiki/Srtm_to_Nodes)
 
-## Used by 
-* [TrafficMining](https://github.com/locked-fg/trafficmining)
+* Used by [TrafficMining](https://github.com/locked-fg/trafficmining)
 
 # Usage
 - Download and unpack [Osmosis latest](http://wiki.openstreetmap.org/wiki/Osmosis#Latest_stable_version).
