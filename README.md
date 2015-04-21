@@ -18,19 +18,19 @@ The plugin works out-of-the-box but provides configurable settings to satisfy ho
     - v1.0.0: first release
 
 ## Relevant links 
-    * [OpenStreetMap](http://www.openstreetmap.org/)
-    * [Osmosis](http://wiki.openstreetmap.org/wiki/Osmosis)
-    * [NASA SRTM](http://www2.jpl.nasa.gov/srtm/)
-    * [plugin page at OpenStreetMap](http://wiki.openstreetmap.org/wiki/Srtm_to_Nodes)
+* [OpenStreetMap](http://www.openstreetmap.org/)
+* [Osmosis](http://wiki.openstreetmap.org/wiki/Osmosis)
+* [NASA SRTM](http://www2.jpl.nasa.gov/srtm/)
+* [plugin page at OpenStreetMap](http://wiki.openstreetmap.org/wiki/Srtm_to_Nodes)
 
 ## Used by 
-    * [TrafficMining](https://github.com/locked-fg/trafficmining)
+* [TrafficMining](https://github.com/locked-fg/trafficmining)
 
 # Usage
-    - Download and unpack [Osmosis latest](http://wiki.openstreetmap.org/wiki/Osmosis#Latest_stable_version).
-    - Check that `lib\default` contains `plexus-classworlds-2.4.jar` If it carries another version number, you possibly have to adjust `bin\osmosis.bat` ~L.38.
-    - Clone and build the repo or download the binary.
-    - Create `bin\plugins` and put the build/downloaded jar there
+- Download and unpack [Osmosis latest](http://wiki.openstreetmap.org/wiki/Osmosis#Latest_stable_version).
+- Check that `lib\default` contains `plexus-classworlds-2.4.jar` If it carries another version number, you possibly have to adjust `bin\osmosis.bat` ~L.38.
+- Clone and build the repo or download the binary.
+- Create `bin\plugins` and put the build/downloaded jar there
 
 Get an OSM file (for example via export from OpenStreetmap.org) and try it: 
 `osmosis.bat --read-xml ... --write-srtm <your args> --write-xml ...`
