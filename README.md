@@ -48,4 +48,35 @@ be usable, too. Therefore it is not recommend to overwrite the default values fo
   * `repExisting` = Replace all existing height tags of nodes (**default**: true)
   * `tagName` = The tag name used for the elevation data. (**default**: height due to historical reasons. Yet, the [ele tag should be used](http://wiki.openstreetmap.org/wiki/Key:ele) according to Openstreetmap)
 
-Examples of use cases can be found at the [example wiki page](Examples).
+
+# Examples
+**Example 1**
+```
+osmosis.bat --read-xml test.osm --write-srtm <additional commands> --write-xml test_with_srtm.osm
+```
+
+**Result**
+The SRTMPlugin uses the default values of all commands.
+
+***
+
+**Example 2**
+```
+osmosis.bat --read-xml test.osm --write-srtm locDir=C:\Users\Test\Desktop\SRTM locOnly=true repExisting=false --write-xml test_with_srtm.osm
+```
+
+**Result:**
+  * `locDir=C:\Users\Test\Desktop\SRTM` local directory for all SRTM files
+  * `locOnly=true` forces the plugin to work only with already existing SRTM files inside the **locDir** directory
+  * `repExisting=false` does not allow the replacement of nodes already tagged with some kind of height information
+
+***
+
+**Example 3**
+```
+osmosis.bat --read-xml test.osm --write-srtm srvBase=http://any.srtm.server.url.here srvSubDirs=America;Africa;Eurasia;Australia --write-xml test_with_srtm.osm
+```
+
+**Result:**
+  * `srvBase=http://any.srtm.server.url.here` as base URL for any available SRTM server
+  * `srvSubDirs=America;Africa;Eurasia;Australia` forces the plugin to look only in the subdirectories of America, Africa, Eurasia and Australia for matching SRTM files while all other subdirectories are being ignored
