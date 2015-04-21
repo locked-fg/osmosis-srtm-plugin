@@ -2,9 +2,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.locked</groupId>
-    <artifactId>osmosis-srtm-plugin</artifactId>
-    <version>1.1.0</version>
+    <groupId>de.locked.osmosis</groupId>
+    <artifactId>srtmplugin</artifactId>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>osmosis-srtm-plugin</name>
@@ -31,28 +31,4 @@
         </dependency>
     </dependencies>
     
-    <build>
-<!--        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>assemble-all</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>-->
-    </build>
 </project>

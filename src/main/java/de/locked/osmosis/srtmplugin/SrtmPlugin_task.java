@@ -1,4 +1,4 @@
-package org.srtmplugin.osm.osmosis;
+package de.locked.osmosis.srtmplugin;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -19,7 +19,7 @@
         <parameter id="name"
                value="SRTMplugin"/>
         <parameter id="class"
-               value="org.srtmplugin.osm.osmosis.SrtmPlugin_loader"/>
+               value="de.locked.osmosis.srtmplugin.SrtmPlugin_loader"/>
     </extension>
 	<!--This is where our plugin plugs into.
     	The extension-point 'task' with a subclass of PluginLoader named 'WriteOSMBinPlugin'
