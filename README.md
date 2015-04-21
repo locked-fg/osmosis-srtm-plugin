@@ -9,7 +9,6 @@ SRTM data to obtain the elevation information. This osmosis-srtm-plugin is inten
 order to add a height tag to each node.
 
 The plugin works out-of-the-box but provides configurable settings to satisfy hopefully all requirements 
-(See [Usage](wiki/Usage) or [Examples](wiki/Examples)).
 
 ## History
     - v1.1.1: moved into suitable package hierarchy
