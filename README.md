@@ -27,7 +27,7 @@ The plugin works out-of-the-box but provides configurable settings to satisfy ho
 # Usage
 - Download and unpack [Osmosis latest](http://wiki.openstreetmap.org/wiki/Osmosis#Latest_stable_version).
 - Check that `lib\default` contains `plexus-classworlds-2.4.jar` If it carries another version number, you possibly have to adjust `bin\osmosis.bat` ~L.38.
-- Clone and build the repo or download the binary.
+- Clone and build the repo or download the binary from [bintray](https://dl.bintray.com/locked-fg/Osmosis-Srtm-Plugin/).
 - Create `bin\plugins` and put the build/downloaded jar there
 
 Get an OSM file (for example via export from OpenStreetmap.org) and try it: 
