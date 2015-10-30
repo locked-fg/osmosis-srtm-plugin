@@ -29,6 +29,7 @@ The plugin works out-of-the-box but provides configurable settings to satisfy ho
 - Check that `lib\default` contains `plexus-classworlds-2.4.jar` If it carries another version number, you possibly have to adjust `bin\osmosis.bat` ~L.38.
 - Clone and build the repo or download the binary from [bintray](https://dl.bintray.com/locked-fg/Osmosis-Srtm-Plugin/).
 - Create `bin\plugins` and put the build/downloaded jar there
+- create a `osmosis-plugins.conf` in the config-folder containing the following line `de.locked.osmosis.srtmplugin.SrtmPlugin_loader`
 
 Get an OSM file (for example via export from OpenStreetmap.org) and try it: 
 `osmosis.bat --read-xml ... --write-srtm <your args> --write-xml ...`
