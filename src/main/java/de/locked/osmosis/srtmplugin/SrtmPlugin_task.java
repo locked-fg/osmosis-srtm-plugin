@@ -173,6 +173,13 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
                 }
             }
         }
+        else {
+            //no preexisting height tag
+            //nevertheless, do not add if NaN
+            if (srtmHeight.isNaN()) {
+                addHeight = false;
+            }
+        }
 
         //add new srtm height tag
         if (addHeight) {
