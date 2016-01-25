@@ -38,10 +38,12 @@ import org.openstreetmap.osmosis.core.task.v0_6.SinkSource;
  * 
  * @author Dominik Paluch
  * @modified Robert Greil
+ * @modified Mihai Ghete
  */
 public class SrtmPlugin_task implements SinkSource, EntityProcessor {
 
     private static final Logger log = Logger.getLogger(SrtmPlugin_task.class.getName());
+    private static final short SRTM_DATA_VOID_VALUE = -32768; // http://dds.cr.usgs.gov/srtm/version2_1/Documentation/Quickstart.pdf
     private String tagName = "height";
     private Sink sink;
     private File localDir = new File("./");
@@ -397,7 +399,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
         long starti = ((1200 - colmin) * 2402) + rowmin * 2;
         in.skip(starti);
         short readShort = readShort(in);
-        return readShort;
+        return (readShort != SRTM_DATA_VOID_VALUE) ? readShort : Double.NaN;
     }
 
     private static void copyInputStream(InputStream in, BufferedOutputStream out) throws IOException {
