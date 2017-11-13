@@ -10,6 +10,10 @@ order to add a height tag to each node.
 
 The plugin works out-of-the-box but provides configurable settings to satisfy hopefully all requirements 
 
+**Known Issues**
+Running the plugin in Osmosis 0.46 will throw error messages, but still provide the correct output.
+Files must be downloaded manually from the USGS website.
+
 ## History
     - v1.1.1: moved into suitable package hierarchy
     - v1.1.0: added possibility to define the tag name (Issue 3)
@@ -30,10 +34,14 @@ The plugin works out-of-the-box but provides configurable settings to satisfy ho
 - Clone and build the repo or [download the binary from Bintray](https://dl.bintray.com/locked-fg/Osmosis-Srtm-Plugin/).
 - Create `bin\plugins` and put the build/downloaded jar there (if this doesn't work, try `lib\default`)
 - create a `osmosis-plugins.conf` in the config-folder containing the following line `de.locked.osmosis.srtmplugin.SrtmPlugin_loader`
+- Download your desired SRTM files from [the USGS website](https://dds.cr.usgs.gov/srtm/version2_1/SRTM3/).
+- Place those files in a folder, making sure each remains as .hgt.zip files.
 
 Get an OSM file (for example via export from OpenStreetmap.org) and try it: 
 `osmosis.bat --read-xml ... --write-srtm <your args> --write-xml ...`
 Afterwards enjoy your osm file with added srtm height tags.
+
+**Make sure you set the locDir param to the location of your SRTM files**
 
 ## Restrictions / SRTM Formats
 The plugin currently supports only SRTM3 files created by the NGA and reprocessed to Version 2.1 
