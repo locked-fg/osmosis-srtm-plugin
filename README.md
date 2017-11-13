@@ -11,7 +11,9 @@ order to add a height tag to each node.
 The plugin works out-of-the-box but provides configurable settings to satisfy hopefully all requirements 
 
 **Known Issues**
+
 Running the plugin in Osmosis 0.46 will throw error messages, but still provide the correct output.
+
 Files must be downloaded manually from the USGS website.
 
 ## History
