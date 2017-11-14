@@ -342,7 +342,7 @@ public class SrtmPlugin_task implements SinkSource, EntityProcessor {
                     //if zipped srtm file cannot be found at any subdirectory
                     //return height Double.NaN
                     if (!ex1) {
-                        log.log(Level.FINE, "Remote zipped SRTM file ''{0}.zip'' not found. Returning no height", file.getName());
+                        log.log(Level.SEVERE, "Remote zipped SRTM file ''{0}.zip'' not found. Returning no height", file.getName());
                         map_failed_srtm.put(file.getName(), 1);
                         return Double.NaN;
                     }
