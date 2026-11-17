@@ -15,6 +15,7 @@ The plugin works out-of-the-box but provides configurable settings to satisfy ho
 * Files must be downloaded manually from the USGS website.
 
 ## History
+    - v1.1.3: bumped junit to 4.13.2 (fixes CVE-2020-15250, Dependabot alert)
     - v1.1.1: moved into suitable package hierarchy
     - v1.1.0: added possibility to define the tag name (Issue 3)
     - v1.0.1: compatibility fix with newer osmosis-versions
